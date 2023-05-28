@@ -1,8 +1,11 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import {initializeApp} from 'firebase/app'; 
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { Link, useNavigate } from "react-router-dom";
 import { ReactComponent as ArrowRightIcon } from "../assets/svg/keyboardArrowRightIcon.svg";
 import visibilityIcon from "../assets/svg/visibilityIcon.svg";
 
+import { ToastContainer, toast } from 'react-toastify';
 function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -10,16 +13,36 @@ function SignIn() {
     password: "",
   });
   const { email, password } = formData;
-
+  
   const onChange = (e) => {
     setFormData((prevState) => ({
       ...prevState,
       [e.target.id]: e.target.value,
     }));
   };
-console.log("formData",formData)
+  const navigate=useNavigate()
+  console.log("formData",formData)
   const onSubmit = async (e) => {
+    
     e.preventDefault();
+    const auth = getAuth();
+    try {
+      const userCredential =await signInWithEmailAndPassword(auth, email, password)
+      // const user=userCredential.user
+      
+      if(userCredential.user){
+        toast.success("User login Successfully", {
+          position: toast.POSITION.TOP_LEFT
+        });
+        navigate('/')
+      }
+      
+    } catch (error) {
+      toast.error("Wrong Credentials", {
+        position: toast.POSITION.TOP_LEFT
+      });
+      console.log("error",error)
+    }
   };
 
   return (

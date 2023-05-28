@@ -9,6 +9,7 @@ import {
 import visibilityIcon from "../assets/svg/visibilityIcon.svg";
 import { db } from "../firebase.config";
 import { setDoc,doc,serverTimestamp } from "firebase/firestore";
+import { toast } from "react-toastify";
 function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -42,8 +43,15 @@ const navigate =useNavigate()
       delete formDataCopy.password
       formDataCopy.timestamp=serverTimestamp()
       await setDoc(doc(db,'users',user.uid),formDataCopy)
+      toast.success("User Registered Successfully", {
+        position: toast.POSITION.TOP_LEFT
+      });
       navigate('/')
-    } catch (error) {}
+    } catch (error) {
+      toast.error("Something wrong with registration", {
+        position: toast.POSITION.TOP_LEFT
+      });
+    }
   };
 
   return (
